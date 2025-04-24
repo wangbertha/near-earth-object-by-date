@@ -24,7 +24,7 @@ interface NeoProp {
 export default function NeoCard({ neo }: NeoProp) {
   return (
     <View style={styles.card}>
-      <Text style={styles.textName}>{neo.name}</Text>
+      <Text style={{ ...styles.textName, ...styles.text }}>{neo.name}</Text>
       <Text style={styles.text}>
         Approx. Diameter: {Math.round(neo.approxDiameter)} feet
       </Text>
@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   textName: {
-    color: "#fff",
     fontWeight: "bold",
   },
   text: {
     color: "#fff",
+    textAlign: "center",
   },
 });
