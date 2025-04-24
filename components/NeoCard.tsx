@@ -21,6 +21,9 @@ interface NeoProp {
   neo: Neo;
 }
 
+/**
+ * Displays all 5 required properties for a given NEO
+ */
 export default function NeoCard({ neo }: NeoProp) {
   return (
     <View style={styles.card}>

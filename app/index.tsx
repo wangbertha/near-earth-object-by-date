@@ -15,6 +15,7 @@ import DateTimePicker, {
 import axios from "axios";
 import NeoCard, { type Neo } from "@/components/NeoCard";
 
+// Background Image
 const OuterSpace = {
   uri: "https://images.pexels.com/photos/29129951/pexels-photo-29129951/free-photo-of-night-sky-with-comet-and-stars.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
 };
@@ -37,6 +38,10 @@ export default function Index() {
   const [date, setDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
 
+  /**
+   * Fetches a list of NEOs on a given day and stores in neos state
+   * @param date Single date to be queried
+   */
   const fetchNeos = (date: Date) => {
     // Build query in the format: API_URL?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&api_key=API_KEY
     const queryString = `${
@@ -50,6 +55,8 @@ export default function Index() {
       .then((response) => {
         const neosObjects =
           response.data.near_earth_objects[dateToString(date || today)];
+
+        // Reformats complex NEO shape from API into simplified shape of only 5 properties
         const neosFormatted: Array<Neo> = neosObjects.map(
           (object: {
             name: string;
@@ -78,7 +85,11 @@ export default function Index() {
             isPotentiallyHazardous: object.is_potentially_hazardous_asteroid,
           })
         );
+
+        // Stores converted object into neos state
         setNeos(neosFormatted);
+
+        // Scrolls user back to top of the list, if applicable
         scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
       })
       .catch((error) => console.error(error));
@@ -105,6 +116,8 @@ export default function Index() {
           detected on a given date. Enter the date in question below, and the
           page will automatically update with the list.
         </Text>
+
+        {/* Depending on current OS, use native date-picking components */}
         {Platform.OS === "web" ? (
           <label>
             Date:
@@ -129,6 +142,8 @@ export default function Index() {
           />
         )}
       </View>
+
+      {/* Display list of NEOs against an outerspace background image */}
       <ImageBackground
         source={OuterSpace}
         resizeMode="cover"
