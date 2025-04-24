@@ -37,7 +37,10 @@ export default function Index() {
   const [date, setDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
 
-  const onSelection = (event: DateTimePickerEvent, date: Date | undefined) => {
+  const onSelection = (
+    event: DateTimePickerEvent | React.ChangeEvent<HTMLInputElement>,
+    date: Date | undefined
+  ) => {
     setDate(date);
 
     // Build query in the format: API_URL?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&api_key=API_KEY
@@ -96,10 +99,22 @@ export default function Index() {
           page will automatically update with the list.
         </Text>
         {Platform.OS === "web" ? (
-          <Text></Text>
+          <label>
+            Date:
+            <input
+              style={styles.datepicker}
+              type="date"
+              defaultValue={dateToString(today)}
+              value={date ? dateToString(date) : dateToString(today)}
+              onChange={(e) => {
+                const [year, month, day] = e.target.value.split("-");
+                onSelection(e, new Date(+year, +month - 1, +day));
+              }}
+            />
+          </label>
         ) : (
           <DateTimePicker
-            style={styles.datetimepicker}
+            style={styles.datepicker}
             testID="dateTimePicker"
             value={date || today}
             mode="date"
@@ -141,7 +156,7 @@ const styles = StyleSheet.create({
     margin: 16,
     textAlign: "center",
   },
-  datetimepicker: {
+  datepicker: {
     margin: 10,
   },
   image: {
