@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -32,6 +32,7 @@ const dateToString = (date: Date) => {
 };
 
 export default function Index() {
+  const scrollRef = useRef<FlatList<Neo>>(null);
   const today = new Date();
   const [date, setDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
@@ -80,6 +81,7 @@ export default function Index() {
           })
         );
         setNeos(neosFormatted);
+        scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
       })
       .catch((error) => console.error(error));
   };
@@ -111,6 +113,7 @@ export default function Index() {
         style={styles.image}
       >
         <FlatList
+          ref={scrollRef}
           style={styles.neolist}
           data={neos}
           renderItem={({ item }) => <NeoCard neo={item} />}
