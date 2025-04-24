@@ -38,7 +38,7 @@ export default function Index() {
   const scrollRef = useRef<FlatList<Neo>>(null);
   const fadeCheckmark = useRef(new Animated.Value(0)).current;
   const today = new Date();
-  const [date, setDate] = useState<Date | undefined>(today);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
 
   /**
@@ -120,8 +120,14 @@ export default function Index() {
     event: DateTimePickerEvent | React.ChangeEvent<HTMLInputElement>,
     date: Date | undefined
   ) => {
-    setDate(date);
-    fetchNeos(date || today);
+    if (
+      date &&
+      selectedDate &&
+      dateToString(date) !== dateToString(selectedDate)
+    ) {
+      setSelectedDate(date);
+      fetchNeos(date);
+    }
   };
 
   return (
@@ -141,7 +147,11 @@ export default function Index() {
               <input
                 style={styles.datepicker}
                 type="date"
-                value={date ? dateToString(date) : dateToString(today)}
+                value={
+                  selectedDate
+                    ? dateToString(selectedDate)
+                    : dateToString(today)
+                }
                 onChange={(e) => {
                   const [year, month, day] = e.target.value.split("-");
                   onSelection(e, new Date(+year, +month - 1, +day));
@@ -152,7 +162,7 @@ export default function Index() {
             <DateTimePicker
               style={styles.datepicker}
               testID="dateTimePicker"
-              value={date || today}
+              value={selectedDate || today}
               mode="date"
               onChange={onSelection}
             />
