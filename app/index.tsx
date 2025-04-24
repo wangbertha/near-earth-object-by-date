@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -37,12 +37,7 @@ export default function Index() {
   const [date, setDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
 
-  const onSelection = (
-    event: DateTimePickerEvent | React.ChangeEvent<HTMLInputElement>,
-    date: Date | undefined
-  ) => {
-    setDate(date);
-
+  const fetchNeos = (date: Date) => {
     // Build query in the format: API_URL?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD&api_key=API_KEY
     const queryString = `${
       process.env.EXPO_PUBLIC_API_URL
@@ -87,6 +82,18 @@ export default function Index() {
         scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
       })
       .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    fetchNeos(today);
+  }, []);
+
+  const onSelection = (
+    event: DateTimePickerEvent | React.ChangeEvent<HTMLInputElement>,
+    date: Date | undefined
+  ) => {
+    setDate(date);
+    fetchNeos(date || today);
   };
 
   return (
