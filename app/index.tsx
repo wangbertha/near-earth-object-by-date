@@ -1,4 +1,5 @@
 import {
+  Animated,
   FlatList,
   ImageBackground,
   Platform,
@@ -11,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import axios from "axios";
 import NeoCard, { type Neo } from "@/components/NeoCard";
@@ -34,6 +36,7 @@ const dateToString = (date: Date) => {
 
 export default function Index() {
   const scrollRef = useRef<FlatList<Neo>>(null);
+  const fadeCheckmark = useRef(new Animated.Value(0)).current;
   const today = new Date();
   const [date, setDate] = useState<Date | undefined>(today);
   const [neos, setNeos] = useState<Array<Neo>>([]);
@@ -91,6 +94,20 @@ export default function Index() {
 
         // Scrolls user back to top of the list, if applicable
         scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+
+        // Display a checkmark next to the Datepicker that then fades out
+        Animated.sequence([
+          Animated.timing(fadeCheckmark, {
+            toValue: 1,
+            duration: 1,
+            useNativeDriver: true,
+          }),
+          Animated.timing(fadeCheckmark, {
+            toValue: 0,
+            duration: 3000,
+            useNativeDriver: true,
+          }),
+        ]).start();
       })
       .catch((error) => console.error(error));
   };
@@ -116,31 +133,36 @@ export default function Index() {
           detected on a given date. Enter the date in question below, and the
           page will automatically update with the list.
         </Text>
-
-        {/* Depending on current OS, use native date-picking components */}
-        {Platform.OS === "web" ? (
-          <label>
-            Date:
-            <input
+        <View style={styles.datepickerRow}>
+          {/* Depending on current OS, use native date-picking components */}
+          {Platform.OS === "web" ? (
+            <label>
+              Date:
+              <input
+                style={styles.datepicker}
+                type="date"
+                value={date ? dateToString(date) : dateToString(today)}
+                onChange={(e) => {
+                  const [year, month, day] = e.target.value.split("-");
+                  onSelection(e, new Date(+year, +month - 1, +day));
+                }}
+              />
+            </label>
+          ) : (
+            <DateTimePicker
               style={styles.datepicker}
-              type="date"
-              defaultValue={dateToString(today)}
-              value={date ? dateToString(date) : dateToString(today)}
-              onChange={(e) => {
-                const [year, month, day] = e.target.value.split("-");
-                onSelection(e, new Date(+year, +month - 1, +day));
-              }}
+              testID="dateTimePicker"
+              value={date || today}
+              mode="date"
+              onChange={onSelection}
             />
-          </label>
-        ) : (
-          <DateTimePicker
-            style={styles.datepicker}
-            testID="dateTimePicker"
-            value={date || today}
-            mode="date"
-            onChange={onSelection}
-          />
-        )}
+          )}
+          <Animated.View
+            style={{ ...styles.checkmark, opacity: fadeCheckmark }}
+          >
+            <Ionicons name="checkmark" size={24} color="green" />
+          </Animated.View>
+        </View>
       </View>
 
       {/* Display list of NEOs against an outerspace background image */}
@@ -178,8 +200,16 @@ const styles = StyleSheet.create({
     margin: 16,
     textAlign: "center",
   },
+  datepickerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   datepicker: {
     margin: 10,
+  },
+  checkmark: {
+    position: "absolute",
+    right: -16,
   },
   image: {
     flex: 1,
