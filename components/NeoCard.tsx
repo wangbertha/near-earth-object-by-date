@@ -24,11 +24,21 @@ interface NeoProp {
 export default function NeoCard({ neo }: NeoProp) {
   return (
     <View style={styles.card}>
-      <Text>{neo.name}</Text>
-      <Text>{neo.approxDiameter}</Text>
-      <Text>{neo.relativeVelocity}</Text>
-      <Text>{neo.missDistance}</Text>
-      <Text>{neo.isPotentiallyHazardous ? "Yes" : "No"}</Text>
+      <Text style={styles.textName}>{neo.name}</Text>
+      <Text style={styles.text}>
+        Approx. Diameter: {Math.round(neo.approxDiameter)} feet
+      </Text>
+      <Text style={styles.text}>
+        Relative Velocity: {Math.round(neo.relativeVelocity)} miles per hour
+      </Text>
+      <Text style={styles.text}>
+        Miss Distance: {Math.round(neo.missDistance)} miles
+      </Text>
+      <Text style={styles.text}>
+        {neo.isPotentiallyHazardous
+          ? 'Categorized as "Potentially Hazardous"'
+          : 'Not categorized as "Potentially Hazardous"'}
+      </Text>
     </View>
   );
 }
@@ -39,5 +49,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     padding: 10,
+  },
+  textName: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  text: {
+    color: "#fff",
   },
 });

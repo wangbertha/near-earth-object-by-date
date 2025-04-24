@@ -1,4 +1,11 @@
-import { FlatList, Platform, Text, View } from "react-native";
+import {
+  FlatList,
+  ImageBackground,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useState } from "react";
 
 import DateTimePicker, {
@@ -7,6 +14,10 @@ import DateTimePicker, {
 
 import axios from "axios";
 import NeoCard, { type Neo } from "@/components/NeoCard";
+
+const OuterSpace = {
+  uri: "https://images.pexels.com/photos/29129951/pexels-photo-29129951/free-photo-of-night-sky-with-comet-and-stars.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+};
 
 /**
  * Converts a date into string format YYYY-MM-DD
@@ -74,24 +85,71 @@ export default function Index() {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {Platform.OS === "web" ? (
-        <Text></Text>
-      ) : (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date || today}
-          mode="date"
-          onChange={onSelection}
+    <View style={styles.container}>
+      <View style={styles.topSection}>
+        <Text style={styles.header}>Welcome to the NEO Rolodex!</Text>
+        <Text style={styles.description}>
+          Here, you can pull the list of the Near-Earth Objects (Asteroids)
+          detected on a given date. Enter the date in question below, and the
+          page will automatically update with the list.
+        </Text>
+        {Platform.OS === "web" ? (
+          <Text></Text>
+        ) : (
+          <DateTimePicker
+            style={styles.datetimepicker}
+            testID="dateTimePicker"
+            value={date || today}
+            mode="date"
+            onChange={onSelection}
+          />
+        )}
+      </View>
+      <ImageBackground
+        source={OuterSpace}
+        resizeMode="cover"
+        style={styles.image}
+      >
+        <FlatList
+          style={styles.neolist}
+          data={neos}
+          renderItem={({ item }) => <NeoCard neo={item} />}
+          scrollsToTop={true}
         />
-      )}
-      <FlatList data={neos} renderItem={({ item }) => <NeoCard neo={item} />} />
+      </ImageBackground>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  topSection: {
+    alignSelf: "stretch",
+    alignItems: "center",
+  },
+  header: {
+    fontSize: 16,
+    marginTop: 12,
+  },
+  description: {
+    margin: 16,
+    textAlign: "center",
+  },
+  datetimepicker: {
+    margin: 10,
+  },
+  image: {
+    flex: 1,
+    alignSelf: "stretch",
+  },
+  neolist: {
+    flex: 1,
+    alignSelf: "stretch",
+    backgroundColor: "#",
+    marginTop: 40,
+    marginBottom: 40,
+  },
+});
