@@ -2,6 +2,10 @@
 
 Mobile application that displays a list of Near-Earth Objects (Asteriods) on a user-selected date
 
+## Demo
+
+<img src="./documentation/demo.gif" height="480" alt="" />
+
 ## Run Locally
 
 1. Clone the repo: `git clone https://github.com/wangbertha/near-earth-object-by-date.git`
