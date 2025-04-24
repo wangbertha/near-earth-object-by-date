@@ -17,11 +17,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
 import NeoCard, { type Neo } from "@/components/NeoCard";
 
-// Background Image
-const OuterSpace = {
-  uri: "https://images.pexels.com/photos/29129951/pexels-photo-29129951/free-photo-of-night-sky-with-comet-and-stars.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-};
-
 /**
  * Converts a date into string format YYYY-MM-DD
  * @param date Date to convert
@@ -177,7 +172,7 @@ export default function Index() {
 
       {/* Display list of NEOs against an outerspace background image */}
       <ImageBackground
-        source={OuterSpace}
+        source={require("@/assets/images/outer-space.png")}
         resizeMode="cover"
         style={styles.image}
       >
@@ -223,7 +218,7 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    alignSelf: "stretch",
+    width: "100%",
   },
   neolist: {
     flex: 1,
